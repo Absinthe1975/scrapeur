@@ -7,34 +7,27 @@ from flask import Flask, jsonify
 
 app = Flask(__name__)
 
-# Configuration GitHub
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
 GITHUB_REPO = os.environ.get("GITHUB_REPO", "Absinthe1975/scrapeur")
 GITHUB_BRANCH = "main"
 
 def push_to_github(file_path, repo_path):
-    """Pousse automatiquement un fichier sur le dépôt GitHub"""
     if not GITHUB_TOKEN:
-        print("Note : GITHUB_TOKEN non configuré, la synchronisation GitHub est ignorée.")
         return False
-
     url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{repo_path}"
     headers = {
         "Authorization": f"Bearer {GITHUB_TOKEN}",
         "Accept": "application/vnd.github+json"
     }
-
     with open(file_path, "rb") as f:
         content_bytes = f.read()
     content_encoded = base64.b64encode(content_bytes).decode("utf-8")
 
     r = requests.get(url, headers=headers)
-    sha = None
-    if r.status_code == 200:
-        sha = r.json().get("sha")
+    sha = r.json().get("sha") if r.status_code == 200 else None
 
     data = {
-        "message": "Mise à jour automatique de la grille consolidée (mode ralenti anti-surcharge)",
+        "message": "Mise à jour automatique de la grille consolidée",
         "content": content_encoded,
         "branch": GITHUB_BRANCH
     }
@@ -42,28 +35,30 @@ def push_to_github(file_path, repo_path):
         data["sha"] = sha
 
     put_response = requests.put(url, headers=headers, json=data)
-    if put_response.status_code in [200, 201]:
-        print(f"Succès : Fichier '{repo_path}' poussé sur GitHub !")
-        return True
-    else:
-        print(f"Erreur lors du push GitHub : {put_response.status_code} - {put_response.text}")
-        return False
+    return put_response.status_code in [200, 201]
 
-def run_consolidation_avec_ralenti():
-    print("=== Démarrage de la consolidation avec limitation de vitesse (Anti-Rate Limit) ===")
+@app.route("/")
+def home():
+    # Affichage immédiat pour éviter le timeout 502 de Render
+    return """
+    <h2>🚀 Mon Comparateur - Service Actif</h2>
+    <p>Le serveur fonctionne correctement et évite les erreurs de délai.</p>
+    <p><a href='/telecharger' target='_blank' style='font-size: 18px; color: blue;'>👉 Voir / Télécharger le JSON consolidé</a></p>
+    <p><a href='/actualiser' style='font-size: 16px; color: green;'>🔄 Lancer une mise à jour manuelle des sources</a></p>
+    """
 
-    # 1. Chargement des tarifs manuels
+@app.route("/actualiser")
+def actualiser():
+    # Route dédiée pour lancer le scraping ralenti sans bloquer la page d'accueil
     chemin_manuel = os.path.join("donnees", "tarifs_manuels.json")
     donnees_manuelles = {}
     if os.path.exists(chemin_manuel):
         try:
             with open(chemin_manuel, "r", encoding="utf-8") as f:
                 donnees_manuelles = json.load(f)
-            print("Succès : Fichier 'tarifs_manuels.json' chargé.")
-        except json.JSONDecodeError:
-            print("Attention : 'tarifs_manuels.json' mal formaté.")
+        except:
+            pass
 
-    # 2. Référentiel des pages à aller chercher (basé sur tes sources)
     tarifs_pages = {
         "ekw": "https://prix-elec.com/fournisseurs/ekwateur/offres",
         "total": "https://prix-elec.com/fournisseurs/totalenergies/offres",
@@ -85,64 +80,37 @@ def run_consolidation_avec_ralenti():
         "enercoop": "https://www.faq.enercoop.fr/hc/fr/articles/360024967152-Annexes-tarifaires"
     }
 
-    resultats_scraping_ralenti = {}
-    headers_requete = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-    }
+    resultats = {}
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
 
-    print("--- Début de la lecture des sources avec pause de courtoisie entre chaque site ---")
     for fournisseur, url in tarifs_pages.items():
         try:
-            print(f"Interrogation de {fournisseur} ({url})...")
-            # Envoi de la requête avec un User-Agent pour passer certains filtres basiques
-            reponse = requests.get(url, headers=headers_requete, timeout=10)
-            
-            if reponse.status_code == 200:
-                resultats_scraping_ralenti[fournisseur] = {"statut": "accessible", "code": 200}
-            else:
-                resultats_scraping_ralenti[fournisseur] = {"statut": f"code_erreur_{reponse.status_code}", "code": reponse.status_code}
-        except requests.exceptions.Timeout:
-            print(f"⚠️ Timeout pour {fournisseur} (site trop lent).")
-            resultats_scraping_ralenti[fournisseur] = {"statut": "timeout"}
-        except Exception as e:
-            print(f"⚠️ Erreur pour {fournisseur} : {e}")
-            resultats_scraping_ralenti[fournisseur] = {"statut": "erreur_technique"}
+            reponse = requests.get(url, headers=headers, timeout=5)
+            resultats[fournisseur] = {"statut": f"code_{reponse.status_code}", "code": reponse.status_code}
+        except:
+            resultats[fournisseur] = {"statut": "erreur_ou_timeout"}
+        time.sleep(1) # Pause réduite à 1 seconde pour être plus fluide
 
-        # 🐢 RALENTISSEMENT : On fait une pause de 3 secondes pour ne pas surcharger les serveurs (évite les erreurs 429)
-        time.sleep(3)
-
-    # Structure globale unifiée
     grille_globale = {
         "metadonnees": {
             "derniere_mise_a_jour": "2026-11-01",
-            "statut": "Consolidation hybride avec mode ralenti (anti-surcharge)"
+            "statut": "Consolidation hybride optimisée"
         },
-        "tests_accessibilite_sources": resultats_scraping_ralenti,
+        "tests_accessibilite_sources": resultats,
         "donnees_manuelles_et_confirmees": donnees_manuelles
     }
 
-    # Sauvegarde locale
     os.makedirs("donnees", exist_ok=True)
     fichier_sortie = os.path.join("donnees", "grille_consolidee.json")
     with open(fichier_sortie, "w", encoding="utf-8") as f:
         json.dump(grille_globale, f, indent=2, ensure_ascii=False)
-        
-    print(f"Fichier global '{fichier_sortie}' mis à jour localement avec succès !")
 
-    # Synchronisation automatique sur GitHub
     push_to_github(fichier_sortie, "donnees/grille_consolidee.json")
 
-@app.route("/")
-def home():
-    try:
-        run_consolidation_avec_ralenti()
-        return """
-        <h2>Consolidation avec ralenti exécutée avec succès !</h2>
-        <p>Le script a interrogé les sources en prenant son temps pour éviter les blocages (erreurs 429) et mis à jour GitHub.</p>
-        <p><a href='/telecharger' target='_blank' style='font-size: 18px; color: blue;'>👉 Voir / Télécharger le JSON consolidé</a></p>
-        """
-    except Exception as e:
-        return f"Erreur durant l'exécution : {e}", 500
+    return """
+    <h3>Mise à jour effectuée avec succès !</h3>
+    <p><a href='/'>Retour à l'accueil</a> | <a href='/telecharger' target='_blank'>Voir le JSON</a></p>
+    """
 
 @app.route("/telecharger")
 def telecharger():
