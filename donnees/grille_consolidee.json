@@ -1,7 +1,31 @@
 {
   "metadonnees": {
     "derniere_mise_a_jour": "2026-11-01",
-    "statut": "Consolidation hybride (Données manuelles et officielles)"
+    "statut": "Consolidation hybride (Tarifs et Sources intégrés)"
+  },
+  "referentiel_sources": {
+    "provider": "gemini",
+    "model": "gemini-3.1-flash-lite",
+    "tarifs_pages": {
+      "ekw": "https://prix-elec.com/fournisseurs/ekwateur/offres",
+      "total": "https://prix-elec.com/fournisseurs/totalenergies/offres",
+      "geg": "https://prix-elec.com/fournisseurs/geg/offres",
+      "gdb": "https://prix-elec.com/fournisseurs/gaz-de-bordeaux/offres",
+      "plen": "https://prix-elec.com/fournisseurs/plenitude/offres",
+      "llum": "https://prix-elec.com/fournisseurs/llum/offres",
+      "dyneff": "https://prix-elec.com/fournisseurs/dyneff/offres",
+      "mint": "https://prix-elec.com/fournisseurs/mint-energie/offres",
+      "primeo": "https://prix-elec.com/fournisseurs/primeo/offres",
+      "alterna": "https://prix-elec.com/fournisseurs/alterna/offres",
+      "edf": "https://prix-elec.com/fournisseurs/edf/offres",
+      "octo": "https://prix-elec.com/fournisseurs/octopus-energy/offres",
+      "alpiq": "https://prix-elec.com/fournisseurs/alpiq/offres",
+      "ohm": "https://prix-elec.com/fournisseurs/ohm-energie/offres",
+      "happe": "https://prix-elec.com/fournisseurs/happ-e/offres",
+      "engie": "https://prix-elec.com/fournisseurs/engie/offres",
+      "ilek": "https://prix-elec.com/fournisseurs/ilek/offres",
+      "enercoop": "https://prix-elec.com/fournisseurs/enercoop/offres"
+    }
   },
   "donnees_manuelles_et_confirmees": {
     "_lisez_moi": "Grilles saisies à la main pour les fournisseurs dont le site interdit les robots (robots.txt) ou qui n'ont pas de page lisible. Ce fichier n'est jamais modifié par les programmes automatiques. Chaque offre a les mêmes champs que dans elec/data.json ou gaz/data.json ; une offre déjà présente (même k et même offer) est complétée champ par champ, sinon elle est ajoutée. Remplir 'niv': 'officiel' et 'nivd' (date de la grille) avec le PDF en source ('s'). Les sections abo_e, abo_g et abo_g0 donnent l'abonnement annuel d'un fournisseur nouveau.",
