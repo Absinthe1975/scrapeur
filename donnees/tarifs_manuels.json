@@ -21,6 +21,33 @@
     {
   "k": "edf",
   "name": "EDF",
+  "offer": "Tarif Bleu - Option Tempo",
+  "bleu_hc": 0.1296,
+  "bleu_hp": 0.1609,
+  "blanc_hc": 0.1486,
+  "blanc_hp": 0.1894,
+  "rouge_hc": 0.1568,
+  "rouge_hp": 0.7562,
+  "abo": {
+    "9": 234.72,
+    "12": 279.84,
+    "15": 322.08,
+    "18": 365.88,
+    "30": 544.44,
+    "36": 630.48
+  },
+  "niv": "officiel",
+  "nivd": "01/02/2026",
+  "d": "01 nov. 2026",
+  "typ": "reglemente",
+  "s": [
+    "Grille officielle Tarif Bleu EDF, option Tempo",
+    "https://particuliers.edf.fr"
+  ]
+},
+    {
+  "k": "edf",
+  "name": "EDF",
   "offer": "Tarif Bleu (Option Base)",
   "a": 0.2001,
   "b": 0.2001,
