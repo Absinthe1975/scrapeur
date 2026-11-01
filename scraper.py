@@ -1,8 +1,25 @@
 import os
 import json
+import subprocess
+import sys
 import requests
 import base64
 from playwright.sync_api import sync_playwright
+
+def install_playwright_browsers():
+    """Télécharge Chromium s'il n'est pas présent sur l'instance."""
+    print("Vérification/Installation des navigateurs Playwright...")
+    subprocess.run([sys.executable, "-m", "playwright", "install", "chromium"], check=True)
+
+def run_scraper():
+    # 1. S'assure que Chromium est installé avant de le lancer
+    install_playwright_browsers()
+    
+    print("Démarrage du scraper sur Render...")
+    
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page(user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
 
 def run_scraper():
     print("Démarrage du scraper sur Render...")
