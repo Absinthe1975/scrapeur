@@ -1,12 +1,13 @@
 import os
 import json
 import base64
+import time
 import requests
 from flask import Flask, jsonify
 
 app = Flask(__name__)
 
-# Configuration GitHub (récupérée de manière sécurisée depuis les variables d'environnement Render)
+# Configuration GitHub
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
 GITHUB_REPO = os.environ.get("GITHUB_REPO", "Absinthe1975/scrapeur")
 GITHUB_BRANCH = "main"
@@ -27,22 +28,19 @@ def push_to_github(file_path, repo_path):
         content_bytes = f.read()
     content_encoded = base64.b64encode(content_bytes).decode("utf-8")
 
-    # 1. Vérifier si le fichier existe déjà pour récupérer son SHA
     r = requests.get(url, headers=headers)
     sha = None
     if r.status_code == 200:
         sha = r.json().get("sha")
 
-    # 2. Préparer la requête de mise à jour / création
     data = {
-        "message": "Mise à jour automatique de la grille consolidée et des sources via Render",
+        "message": "Mise à jour automatique de la grille consolidée (mode ralenti anti-surcharge)",
         "content": content_encoded,
         "branch": GITHUB_BRANCH
     }
     if sha:
         data["sha"] = sha
 
-    # 3. Envoyer à l'API GitHub
     put_response = requests.put(url, headers=headers, json=data)
     if put_response.status_code in [200, 201]:
         print(f"Succès : Fichier '{repo_path}' poussé sur GitHub !")
@@ -51,8 +49,8 @@ def push_to_github(file_path, repo_path):
         print(f"Erreur lors du push GitHub : {put_response.status_code} - {put_response.text}")
         return False
 
-def run_consolidation():
-    print("=== Démarrage de la consolidation globale avec sources == data ===")
+def run_consolidation_avec_ralenti():
+    print("=== Démarrage de la consolidation avec limitation de vitesse (Anti-Rate Limit) ===")
 
     # 1. Chargement des tarifs manuels
     chemin_manuel = os.path.join("donnees", "tarifs_manuels.json")
@@ -65,39 +63,61 @@ def run_consolidation():
         except json.JSONDecodeError:
             print("Attention : 'tarifs_manuels.json' mal formaté.")
 
-    # 2. Chargement ou intégration des sources et liens (sources.json)
-    sources_data = {
-        "provider": "gemini",
-        "model": "gemini-3.1-flash-lite",
-        "tarifs_pages": {
-            "ekw": "https://prix-elec.com/fournisseurs/ekwateur/offres",
-            "total": "https://prix-elec.com/fournisseurs/totalenergies/offres",
-            "geg": "https://prix-elec.com/fournisseurs/geg/offres",
-            "gdb": "https://prix-elec.com/fournisseurs/gaz-de-bordeaux/offres",
-            "plen": "https://prix-elec.com/fournisseurs/plenitude/offres",
-            "llum": "https://prix-elec.com/fournisseurs/llum/offres",
-            "dyneff": "https://prix-elec.com/fournisseurs/dyneff/offres",
-            "mint": "https://prix-elec.com/fournisseurs/mint-energie/offres",
-            "primeo": "https://prix-elec.com/fournisseurs/primeo/offres",
-            "alterna": "https://prix-elec.com/fournisseurs/alterna/offres",
-            "edf": "https://prix-elec.com/fournisseurs/edf/offres",
-            "octo": "https://prix-elec.com/fournisseurs/octopus-energy/offres",
-            "alpiq": "https://prix-elec.com/fournisseurs/alpiq/offres",
-            "ohm": "https://prix-elec.com/fournisseurs/ohm-energie/offres",
-            "happe": "https://prix-elec.com/fournisseurs/happ-e/offres",
-            "engie": "https://prix-elec.com/fournisseurs/engie/offres",
-            "ilek": "https://prix-elec.com/fournisseurs/ilek/offres",
-            "enercoop": "https://prix-elec.com/fournisseurs/enercoop/offres"
-        }
+    # 2. Référentiel des pages à aller chercher (basé sur tes sources)
+    tarifs_pages = {
+        "ekw": "https://prix-elec.com/fournisseurs/ekwateur/offres",
+        "total": "https://prix-elec.com/fournisseurs/totalenergies/offres",
+        "geg": "https://prix-elec.com/fournisseurs/geg/offres",
+        "gdb": "https://prix-elec.com/fournisseurs/gaz-de-bordeaux/offres",
+        "plen": "https://prix-elec.com/fournisseurs/plenitude/offres",
+        "llum": "https://prix-elec.com/fournisseurs/llum/offres",
+        "dyneff": "https://prix-elec.com/fournisseurs/dyneff/offres",
+        "mint": "https://prix-elec.com/fournisseurs/mint-energie/offres",
+        "primeo": "https://prix-elec.com/fournisseurs/primeo/offres",
+        "alterna": "https://prix-elec.com/fournisseurs/alterna/offres",
+        "edf": "https://prix-elec.com/fournisseurs/edf/offres",
+        "octo": "https://octopusenergy.fr/offre-electricite-tarifs",
+        "alpiq": "https://prix-elec.com/fournisseurs/alpiq/offres",
+        "ohm": "https://prix-elec.com/fournisseurs/ohm-energie/offres",
+        "happe": "https://prix-elec.com/fournisseurs/happ-e/offres",
+        "engie": "https://particuliers.engie.fr/",
+        "ilek": "https://www.ilek.fr/grilles-tarifaires",
+        "enercoop": "https://www.faq.enercoop.fr/hc/fr/articles/360024967152-Annexes-tarifaires"
     }
 
-    # Structure globale unifiée intégrant les tarifs et le référentiel des sources
+    resultats_scraping_ralenti = {}
+    headers_requete = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    }
+
+    print("--- Début de la lecture des sources avec pause de courtoisie entre chaque site ---")
+    for fournisseur, url in tarifs_pages.items():
+        try:
+            print(f"Interrogation de {fournisseur} ({url})...")
+            # Envoi de la requête avec un User-Agent pour passer certains filtres basiques
+            reponse = requests.get(url, headers=headers_requete, timeout=10)
+            
+            if reponse.status_code == 200:
+                resultats_scraping_ralenti[fournisseur] = {"statut": "accessible", "code": 200}
+            else:
+                resultats_scraping_ralenti[fournisseur] = {"statut": f"code_erreur_{reponse.status_code}", "code": reponse.status_code}
+        except requests.exceptions.Timeout:
+            print(f"⚠️ Timeout pour {fournisseur} (site trop lent).")
+            resultats_scraping_ralenti[fournisseur] = {"statut": "timeout"}
+        except Exception as e:
+            print(f"⚠️ Erreur pour {fournisseur} : {e}")
+            resultats_scraping_ralenti[fournisseur] = {"statut": "erreur_technique"}
+
+        # 🐢 RALENTISSEMENT : On fait une pause de 3 secondes pour ne pas surcharger les serveurs (évite les erreurs 429)
+        time.sleep(3)
+
+    # Structure globale unifiée
     grille_globale = {
         "metadonnees": {
             "derniere_mise_a_jour": "2026-11-01",
-            "statut": "Consolidation hybride (Tarifs et Sources intégrés)"
+            "statut": "Consolidation hybride avec mode ralenti (anti-surcharge)"
         },
-        "referentiel_sources": sources_data,
+        "tests_accessibilite_sources": resultats_scraping_ralenti,
         "donnees_manuelles_et_confirmees": donnees_manuelles
     }
 
@@ -115,11 +135,11 @@ def run_consolidation():
 @app.route("/")
 def home():
     try:
-        run_consolidation()
+        run_consolidation_avec_ralenti()
         return """
-        <h2>Consolidation globale et des sources exécutée avec succès !</h2>
-        <p>Le fichier <b>grille_consolidee.json</b> intègre désormais toutes les données et les liens de référence.</p>
-        <p><a href='/telecharger' target='_blank' style='font-size: 18px; color: blue;'>👉 Voir / Télécharger le JSON unifié complet</a></p>
+        <h2>Consolidation avec ralenti exécutée avec succès !</h2>
+        <p>Le script a interrogé les sources en prenant son temps pour éviter les blocages (erreurs 429) et mis à jour GitHub.</p>
+        <p><a href='/telecharger' target='_blank' style='font-size: 18px; color: blue;'>👉 Voir / Télécharger le JSON consolidé</a></p>
         """
     except Exception as e:
         return f"Erreur durant l'exécution : {e}", 500
