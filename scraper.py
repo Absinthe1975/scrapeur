@@ -12,60 +12,51 @@ def install_playwright_browsers():
 
 def run_scraper():
     install_playwright_browsers()
-    print("Démarrage du scraping et fusion des données...")
+    print("Démarrage du scraper et consolidation locale...")
 
-    # 1. Données récupérées automatiquement (là où c'est autorisé/accessible)
+    # 1. Récupération des données automatisées (là où les robots l'autorisent)
     donnees_auto = {}
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
         
-        # Exemple de ce que tu arrives à lire automatiquement
-        # ... ton code de scraping ici ...
+        # --- Insère ici tes actions de scraping automatique ---
+        # page.goto("URL_autorisee")
+        # donnees_auto["site_xyz"] = page.inner_text("...")
         
         browser.close()
 
-    # Données simulées automatiques pour l'exemple
-    donnees_auto = {
-        "source": "automatique",
-        "date_maj": "2026-11-01",
-        "fournisseurs_dispo": ["Alterna", "TotalEnergies (Offres éligibles)"]
-    }
+    # Simulation de données automatiques pour l'exemple
+    donnees_auto["statut_auto"] = "Récupéré avec succès via Playwright"
 
-    # 2. Charger tes données manuelles / À confirmer (EDF, Engie, ilek, etc.)
-    # Tu peux stocker un fichier "tarifs_manuels.json" directement dans ton dépôt scrapeur
+    # 2. Lecture de ton fichier de saisie manuelle présent dans le dépôt scrapeur
     chemin_manuel = "tarifs_manuels.json"
     donnees_manuelles = {}
+    
     if os.path.exists(chemin_manuel):
         with open(chemin_manuel, "r", encoding="utf-8") as f:
             donnees_manuelles = json.load(f)
+        print("Fichier 'tarifs_manuels.json' chargé avec succès.")
     else:
-        # Structure de secours si le fichier n'existe pas encore
-        donnees_manuelles = {
-            "source": "manuel_et_pdf",
-            "statut": "En attente de saisie",
-            "fournisseurs": {
-                "EDF": {"statut": "À confirmer", "note": "Interdit robots.txt - Données grilles manuelles"},
-                "ENGIE": {"statut": "À confirmer", "note": "Saisi à la main"},
-                "ilek": {"statut": "À confirmer", "note": "Page non lisible par le script"}
-            }
-        }
+        print("Attention : 'tarifs_manuels.json' introuvable dans le dépôt.")
 
-    # 3. Fusionner le tout dans un unique fichier final propre
-    grille_globale = {
+    # 3. Fusion des deux mondes dans un dictionnaire global unique
+    grille_complete = {
         "metadonnees": {
-            "derniere_generation": "2026-11-01"
+            "derniere_maj": "2026-11-01",
+            "mode": "Hybride (Auto + Manuel)"
         },
         "donnees_automatiques": donnees_auto,
         "donnees_manuelles_et_confirmees": donnees_manuelles
     }
 
-    # 4. Enregistrer dans un nouveau fichier local : "grille_finale.json"
-    nom_fichier_sortie = "grille_finale.json"
+    # 4. Enregistrement dans un NOUVEAU fichier local (ex: grille_consolidee.json)
+    # Ce fichier reste sagement dans ton dépôt scrapeur sans toucher à ton site
+    nom_fichier_sortie = "grille_consolidee.json"
     with open(nom_fichier_sortie, "w", encoding="utf-8") as f:
-        json.dump(grille_globale, f, indent=2, ensure_ascii=False)
+        json.dump(grille_complete, f, indent=2, ensure_ascii=False)
     
-    print(f"Fichier '{nom_fichier_sortie}' généré avec succès dans le dépôt scrapeur !")
+    print(f"Fichier consolidé '{nom_fichier_sortie}' généré avec succès dans 'scrapeur' !")
 
 if __name__ == "__main__":
     run_scraper()
