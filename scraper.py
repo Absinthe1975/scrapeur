@@ -9,22 +9,18 @@ from playwright.sync_api import sync_playwright
 def install_playwright_browsers():
     """Télécharge Chromium s'il n'est pas présent sur l'instance."""
     print("Vérification/Installation des navigateurs Playwright...")
-    subprocess.run([sys.executable, "-m", "playwright", "install", "chromium"], check=True)
+    try:
+        subprocess.run([sys.executable, "-m", "playwright", "install", "chromium"], check=True)
+    except Exception as e:
+        print(f"Note sur l'installation des navigateurs : {e}")
 
 def run_scraper():
-    # 1. S'assure que Chromium est installé avant de le lancer
+    # 1. S'assure que Chromium est installé au démarrage
     install_playwright_browsers()
     
     print("Démarrage du scraper sur Render...")
     
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        page = browser.new_page(user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
-
-def run_scraper():
-    print("Démarrage du scraper sur Render...")
-    
-    # Exemple de récupération de données via Playwright (contourne les robots.txt)
+    # 2. Scraping avec Playwright (contourne les robots.txt)
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page(user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
@@ -35,7 +31,7 @@ def run_scraper():
         
         browser.close()
 
-    # Dictionnaire de données simulé/récupéré pour l'exemple
+    # 3. Dictionnaire de données simulé/récupéré pour l'exemple
     nouveaux_tarifs = {
         "derniere_mise_a_jour": "2026-11-01",
         "statut": "Données récupérées avec succès via le scraper"
@@ -44,12 +40,12 @@ def run_scraper():
     # Conversion en texte JSON
     json_str = json.dumps(nouveaux_tarifs, indent=2, ensure_ascii=False)
     
-    # Envoi automatique vers ton dépôt principal (Ton site GitHub Pages)
+    # 4. Envoi automatique vers ton dépôt principal (Ton site GitHub Pages)
     push_to_main_repo(json_str)
 
 def push_to_main_repo(content_json_str):
     token = os.environ.get("GH_TOKEN")
-    repo = "absinthe1975/comparateur-energie" # Ton dépôt principal (change si le nom exact diffère)
+    repo = "absinthe1975/comparateur-energie" # Ton dépôt principal
     path = "data.json" # Le fichier de données de ton site
     
     url = f"https://api.github.com/repos/{repo}/contents/{path}"
