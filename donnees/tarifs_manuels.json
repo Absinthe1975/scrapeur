@@ -1,1 +1,296 @@
-
+{
+  "_lisez_moi": "Grilles saisies à la main pour les fournisseurs dont le site interdit les robots (robots.txt) ou qui n'ont pas de page lisible. Ce fichier n'est jamais modifié par les programmes automatiques. Chaque offre a les mêmes champs que dans elec/data.json ou gaz/data.json ; une offre déjà présente (même k et même offer) est complétée champ par champ, sinon elle est ajoutée. Remplir 'niv': 'officiel' et 'nivd' (date de la grille) avec le PDF en source ('s'). Les sections abo_e, abo_g et abo_g0 donnent l'abonnement annuel d'un fournisseur nouveau.",
+  "_exemple": {
+    "k": "fournisseur",
+    "name": "Nom affiché",
+    "offer": "Nom de l'offre",
+    "a": 0.2,
+    "b": 0.199,
+    "ab6": 200.0,
+    "ab9": 250.0,
+    "niv": "officiel",
+    "nivd": "01/10/2026",
+    "d": "20 oct. 2026",
+    "s": [
+      "Grille officielle (1er oct. 2026)",
+      "https://exemple.fr/grille.pdf"
+    ],
+    "typ": "fixe"
+  },
+  "elec": [
+    {
+      "k": "bellenergie",
+      "name": "La Bellenergie",
+      "offer": "Prudence, prix fixe 1 an",
+      "a": 0.1968,
+      "b": 0.1953,
+      "ab6": 184.32,
+      "ab9": 232.56,
+      "abo": {
+        "3": 139.56,
+        "6": 184.32,
+        "9": 232.56,
+        "12": 279.12,
+        "15": 322.68,
+        "18": 367.68,
+        "24": 463.56,
+        "30": 551.52,
+        "36": 640.44
+      },
+      "niv": "officiel",
+      "nivd": "01/08/2026",
+      "d": "24 oct. 2026",
+      "typ": "fixe",
+      "s": [
+        "Grille officielle La Bellenergie, particuliers ≤ 36 kVA (1er août 2026)",
+        "https://labellenergie.fr/pdf/grille-tarifaire-la-bellenergie-particuliers.pdf?r=1"
+      ]
+    },
+    {
+      "k": "bellenergie",
+      "name": "La Bellenergie",
+      "offer": "Constance, prix fixe 2 ans",
+      "a": 0.1968,
+      "b": 0.1953,
+      "ab6": 214.44,
+      "ab9": 262.68,
+      "abo": {
+        "3": 169.56,
+        "6": 214.44,
+        "9": 262.68,
+        "12": 309.24,
+        "15": 352.8,
+        "18": 397.8,
+        "24": 493.68,
+        "30": 581.64,
+        "36": 670.56
+      },
+      "niv": "officiel",
+      "nivd": "01/08/2026",
+      "d": "24 oct. 2026",
+      "typ": "fixe",
+      "s": [
+        "Grille officielle La Bellenergie, particuliers ≤ 36 kVA (1er août 2026)",
+        "https://labellenergie.fr/pdf/grille-tarifaire-la-bellenergie-particuliers.pdf?r=1"
+      ]
+    },
+    {
+      "k": "bellenergie",
+      "name": "La Bellenergie",
+      "offer": "Garance, prix fixe 3 ans",
+      "a": 0.1968,
+      "b": 0.1953,
+      "ab6": 244.32,
+      "ab9": 292.56,
+      "abo": {
+        "3": 199.56,
+        "6": 244.32,
+        "9": 292.56,
+        "12": 339.12,
+        "15": 382.8,
+        "18": 427.68,
+        "24": 523.68,
+        "30": 611.64,
+        "36": 700.56
+      },
+      "niv": "officiel",
+      "nivd": "01/08/2026",
+      "d": "24 oct. 2026",
+      "typ": "fixe",
+      "s": [
+        "Grille officielle La Bellenergie, particuliers ≤ 36 kVA (1er août 2026)",
+        "https://labellenergie.fr/pdf/grille-tarifaire-la-bellenergie-particuliers.pdf?r=1"
+      ]
+    },
+    {
+      "k": "gdb",
+      "name": "Gaz de Bordeaux",
+      "offer": "NovaFixe Élec",
+      "a": 0.18373,
+      "b": 0.18233,
+      "ab6": 190.44,
+      "ab9": 238.56,
+      "abo": {
+        "3": 145.56,
+        "6": 190.44,
+        "9": 238.56,
+        "12": 285.12,
+        "15": 328.8
+      },
+      "abo_seul": true,
+      "niv": "officiel",
+      "nivd": "01/10/2026",
+      "d": "25 oct. 2026",
+      "typ": "fixe",
+      "s": [
+        "Fiche descriptive officielle Gaz de Bordeaux, Novafixe Bonus Élec (grille annexe, souscriptions d'octobre 2026, identique pour Paris, Marseille, Lille, Clermont-Ferrand, Limoges et Gap)",
+        "https://www.gazdebordeaux.fr/nos-offres-d-energie/electricite#telechargement-grille-tarifaire-elec"
+      ]
+    }
+  ],
+  "gas": [],
+  "duo": [],
+  "abo_e": {
+    "bellenergie": 184.32
+  },
+  "abo_g": {},
+  "abo_g0": {},
+  "hphc": [
+    {
+      "k": "dyneff",
+      "name": "Dyneff",
+      "offer": "Contrat+ Électricité",
+      "hp": 0.19649,
+      "hc": 0.16034,
+      "abo": {
+        "6": 187.8,
+        "9": 234.72,
+        "12": 279.84,
+        "15": 322.08,
+        "18": 365.88,
+        "24": 458.88,
+        "30": 544.44,
+        "36": 630.48
+      },
+      "abo_seul": true,
+      "niv": "officiel",
+      "nivd": "01/08/2026",
+      "d": "23 oct. 2026",
+      "typ": "indexe",
+      "s": [
+        "Grille officielle Dyneff, heures pleines / creuses (1er août 2026)",
+        "https://www.dyneff-elec-gaz.fr/wp-content/uploads/2026/02/ContratElec_HPHC_260801.pdf"
+      ]
+    },
+    {
+      "k": "bellenergie",
+      "name": "La Bellenergie",
+      "offer": "Prudence, prix fixe 1 an",
+      "hp": 0.2106,
+      "hc": 0.1565,
+      "abo": {
+        "6": 184.32,
+        "9": 235.92,
+        "12": 283.56,
+        "15": 328.32,
+        "18": 374.4,
+        "24": 472.56,
+        "30": 562.8,
+        "36": 653.88
+      },
+      "abo_seul": true,
+      "niv": "officiel",
+      "nivd": "01/08/2026",
+      "d": "24 oct. 2026",
+      "typ": "fixe",
+      "s": [
+        "Grille officielle La Bellenergie, particuliers ≤ 36 kVA (1er août 2026)",
+        "https://labellenergie.fr/pdf/grille-tarifaire-la-bellenergie-particuliers.pdf?r=1"
+      ]
+    },
+    {
+      "k": "bellenergie",
+      "name": "La Bellenergie",
+      "offer": "Constance, prix fixe 2 ans",
+      "hp": 0.2106,
+      "hc": 0.1565,
+      "abo": {
+        "6": 214.44,
+        "9": 266.04,
+        "12": 313.68,
+        "15": 358.44,
+        "18": 404.52,
+        "24": 502.68,
+        "30": 592.92,
+        "36": 684.0
+      },
+      "abo_seul": true,
+      "niv": "officiel",
+      "nivd": "01/08/2026",
+      "d": "24 oct. 2026",
+      "typ": "fixe",
+      "s": [
+        "Grille officielle La Bellenergie, particuliers ≤ 36 kVA (1er août 2026)",
+        "https://labellenergie.fr/pdf/grille-tarifaire-la-bellenergie-particuliers.pdf?r=1"
+      ]
+    },
+    {
+      "k": "bellenergie",
+      "name": "La Bellenergie",
+      "offer": "Garance, prix fixe 3 ans",
+      "hp": 0.2106,
+      "hc": 0.1565,
+      "abo": {
+        "6": 244.32,
+        "9": 295.92,
+        "12": 343.56,
+        "15": 388.32,
+        "18": 434.4,
+        "24": 532.56,
+        "30": 622.8,
+        "36": 713.88
+      },
+      "abo_seul": true,
+      "niv": "officiel",
+      "nivd": "01/08/2026",
+      "d": "24 oct. 2026",
+      "typ": "fixe",
+      "s": [
+        "Grille officielle La Bellenergie, particuliers ≤ 36 kVA (1er août 2026)",
+        "https://labellenergie.fr/pdf/grille-tarifaire-la-bellenergie-particuliers.pdf?r=1"
+      ]
+    },
+    {
+      "k": "gdb",
+      "name": "Gaz de Bordeaux",
+      "offer": "NovaFixe Élec",
+      "hp": 0.19648,
+      "hc": 0.14669,
+      "abo": {
+        "6": 190.44,
+        "9": 238.56,
+        "12": 285.12,
+        "15": 328.8,
+        "18": 373.68,
+        "24": 469.56,
+        "30": 557.52,
+        "36": 646.56
+      },
+      "abo_seul": true,
+      "niv": "officiel",
+      "nivd": "01/10/2026",
+      "d": "25 oct. 2026",
+      "typ": "fixe",
+      "s": [
+        "Fiche descriptive officielle Gaz de Bordeaux, Novafixe Bonus Élec (grille annexe, souscriptions d'octobre 2026, identique pour Paris, Marseille, Lille, Clermont-Ferrand, Limoges et Gap)",
+        "https://www.gazdebordeaux.fr/nos-offres-d-energie/electricite#telechargement-grille-tarifaire-elec"
+      ]
+    },
+    {
+      "k": "enercoop",
+      "name": "Enercoop",
+      "offer": "Flexibilité heures creuses",
+      "hp": 0.27764,
+      "hc": 0.18983,
+      "abo": {
+        "3": 132.72,
+        "6": 217.32,
+        "9": 291.96,
+        "12": 371.04,
+        "15": 424.32,
+        "18": 498.24,
+        "24": 632.4,
+        "30": 776.76,
+        "36": 921.24
+      },
+      "abo_seul": true,
+      "niv": "officiel",
+      "nivd": "01/08/2026",
+      "d": "26 oct. 2026",
+      "s": [
+        "Annexes tarifaires Enercoop, particuliers ≤ 36 kVA (1er août 2026)",
+        "https://www.faq.enercoop.fr/hc/fr/article_attachments/37607556170770"
+      ]
+    }
+  ]
+}
