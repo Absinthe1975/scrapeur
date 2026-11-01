@@ -1,79 +1,79 @@
 {
   "metadonnees": {
     "derniere_mise_a_jour": "2026-11-01",
-    "statut": "Consolidation hybride avec mode ralenti (anti-surcharge)"
+    "statut": "Consolidation hybride optimisée"
   },
   "tests_accessibilite_sources": {
     "ekw": {
-      "statut": "code_erreur_403",
+      "statut": "code_403",
       "code": 403
     },
     "total": {
-      "statut": "code_erreur_403",
+      "statut": "code_403",
       "code": 403
     },
     "geg": {
-      "statut": "code_erreur_403",
+      "statut": "code_403",
       "code": 403
     },
     "gdb": {
-      "statut": "code_erreur_403",
+      "statut": "code_403",
       "code": 403
     },
     "plen": {
-      "statut": "code_erreur_403",
+      "statut": "code_403",
       "code": 403
     },
     "llum": {
-      "statut": "code_erreur_403",
+      "statut": "code_403",
       "code": 403
     },
     "dyneff": {
-      "statut": "code_erreur_403",
+      "statut": "code_403",
       "code": 403
     },
     "mint": {
-      "statut": "code_erreur_403",
+      "statut": "code_403",
       "code": 403
     },
     "primeo": {
-      "statut": "code_erreur_403",
+      "statut": "code_403",
       "code": 403
     },
     "alterna": {
-      "statut": "code_erreur_403",
+      "statut": "code_403",
       "code": 403
     },
     "edf": {
-      "statut": "code_erreur_403",
+      "statut": "code_403",
       "code": 403
     },
     "octo": {
-      "statut": "code_erreur_429",
+      "statut": "code_429",
       "code": 429
     },
     "alpiq": {
-      "statut": "code_erreur_403",
+      "statut": "code_403",
       "code": 403
     },
     "ohm": {
-      "statut": "code_erreur_403",
+      "statut": "code_403",
       "code": 403
     },
     "happe": {
-      "statut": "code_erreur_403",
+      "statut": "code_403",
       "code": 403
     },
     "engie": {
-      "statut": "accessible",
+      "statut": "code_200",
       "code": 200
     },
     "ilek": {
-      "statut": "accessible",
+      "statut": "code_200",
       "code": 200
     },
     "enercoop": {
-      "statut": "code_erreur_403",
+      "statut": "code_403",
       "code": 403
     }
   },
