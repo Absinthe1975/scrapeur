@@ -21,6 +21,33 @@
     {
   "k": "edf",
   "name": "EDF",
+  "offer": "Zen Estival",
+  "description": "Heures creuses et super creuses l'été, plus chères l'hiver ; bonus de bienvenue de 100 €.",
+  "tarifs_saisonniers": {
+    "ete": {
+      "heures_pleines": 0.1522,
+      "heures_creuses": 0.1304,
+      "super_creuses": 0.0987
+    },
+    "hiver": {
+      "heures_pleines": 0.2627,
+      "heures_creuses": 0.2062,
+      "super_creuses": 0.1928
+    }
+  },
+  "prime": "100 €",
+  "niv": "estime_presse",
+  "nivd": "06/2026",
+  "d": "01 nov. 2026",
+  "typ": "saisonnier",
+  "s": [
+    "Hellowatt - Offres électricité (juin 2026)",
+    "https://www.hellowatt.fr/blog/octotempo-zen-offres-electricite/"
+  ]
+},
+    {
+  "k": "edf",
+  "name": "EDF",
   "offer": "Tarif Bleu - Option Tempo",
   "bleu_hc": 0.1296,
   "bleu_hp": 0.1609,
