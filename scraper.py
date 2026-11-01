@@ -12,9 +12,13 @@ def run_consolidation():
     donnees_manuelles = {}
     
     if os.path.exists(chemin_manuel):
-        with open(chemin_manuel, "r", encoding="utf-8") as f:
-            donnees_manuelles = json.load(f)
-        print("Succès : Fichier 'tarifs_manuels.json' chargé depuis le dossier donnees.")
+        try:
+            with open(chemin_manuel, "r", encoding="utf-8") as f:
+                donnees_manuelles = json.load(f)
+            print("Succès : Fichier 'tarifs_manuels.json' chargé depuis le dossier donnees.")
+        except json.JSONDecodeError:
+            print("Attention : Le fichier 'tarifs_manuels.json' est vide ou mal formaté. Utilisation d'une structure vide.")
+            donnees_manuelles = {}
     else:
         print(f"Attention : Fichier introuvable à l'emplacement {chemin_manuel}")
 
