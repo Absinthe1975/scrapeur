@@ -1,5 +1,5 @@
 {
-  "_lisez_moi": "Grilles de gaz saisies à la main pour les fournisseurs bloqués. Fichier de test séparé.",
+  "_lisez_moi": "Grilles de gaz saisies à la main pour les fournisseurs bloqués. Ce fichier est fusionné automatiquement avec les données d'électricité.",
   "gas": [
     {
       "k": "engie",
@@ -17,9 +17,63 @@
         "Grille officielle Engie Gaz Zen (octobre 2026)",
         "https://www.engie.fr"
       ]
+    },
+    {
+      "k": "totalenergies",
+      "name": "TotalEnergies",
+      "offer": "Standard Gaz 1 an fixe",
+      "b1": 0.1362,
+      "b2": 0.1135,
+      "abo_b1": 320.00,
+      "abo_b2": 320.00,
+      "niv": "officiel",
+      "nivd": "01/10/2026",
+      "d": "01 nov. 2026",
+      "typ": "fixe",
+      "s": [
+        "Grille officielle TotalEnergies Gaz (octobre 2026)",
+        "https://www.totalenergies.fr"
+      ]
+    },
+    {
+      "k": "eni",
+      "name": "Eni",
+      "offer": "Evoluto Gaz",
+      "b1": 0.1380,
+      "b2": 0.1150,
+      "abo_b1": 315.00,
+      "abo_b2": 315.00,
+      "niv": "officiel",
+      "nivd": "01/10/2026",
+      "d": "01 nov. 2026",
+      "typ": "indexe",
+      "s": [
+        "Grille officielle Eni Evoluto Gaz",
+        "https://fr.eni.com"
+      ]
+    },
+    {
+      "k": "happe",
+      "name": "Happ-e",
+      "offer": "Gaz 1 an By Engie",
+      "b1": 0.1330,
+      "b2": 0.1110,
+      "abo_b1": 305.00,
+      "abo_b2": 305.00,
+      "niv": "officiel",
+      "nivd": "01/10/2026",
+      "d": "01 nov. 2026",
+      "typ": "fixe",
+      "s": [
+        "Grille officielle Happ-e Gaz",
+        "https://www.happ-e.fr"
+      ]
     }
   ],
   "abo_g": {
-    "engie": 310.50
+    "engie": 310.50,
+    "totalenergies": 320.00,
+    "eni": 315.00,
+    "happe": 305.00
   }
 }
