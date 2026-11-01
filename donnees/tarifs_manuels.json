@@ -19,6 +19,34 @@
   },
   "elec": [
     {
+  "k": "edf",
+  "name": "EDF",
+  "offer": "Tarif Bleu (Option Base)",
+  "a": 0.2001,
+  "b": 0.2001,
+  "ab6": 187.80,
+  "ab9": 234.72,
+  "abo": {
+    "3": 144.36,
+    "6": 187.80,
+    "9": 234.72,
+    "12": 279.84,
+    "15": 322.08,
+    "18": 365.88,
+    "24": 458.88,
+    "30": 544.44,
+    "36": 630.48
+  },
+  "niv": "officiel",
+  "nivd": "01/02/2026",
+  "d": "01 nov. 2026",
+  "typ": "reglemente",
+  "s": [
+    "Grille officielle Tarif Bleu EDF, option Base",
+    "https://particuliers.edf.fr"
+  ]
+},
+    {
       "k": "bellenergie",
       "name": "La Bellenergie",
       "offer": "Prudence, prix fixe 1 an",
