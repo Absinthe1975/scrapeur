@@ -46,14 +46,14 @@ def run_consolidation():
 
 @app.route("/")
 def home():
-    run_consolidation()
-    return "Scraping et consolidation exécutés avec succès !"
-
-if __name__ == "__main__":
+    # Le scraping / consolidation s'exécute uniquement lorsque tu visites l'URL
     try:
         run_consolidation()
+        return "Scraping et consolidation exécutés avec succès !"
     except Exception as e:
-        print(f"Erreur au démarrage : {e}")
-        
+        return f"Erreur durant l'exécution : {e}", 500
+
+if __name__ == "__main__":
+    # Flask démarre DIRECTEMENT sans bloquer sur le téléchargement au démarrage
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
