@@ -5,7 +5,6 @@ import time
 import random
 import requests
 from flask import Flask, jsonify
-from playwright.sync_api import sync_playwright
 
 app = Flask(__name__)
 
@@ -29,7 +28,7 @@ def push_to_github(file_path, repo_path):
     sha = r.json().get("sha") if r.status_code == 200 else None
 
     data = {
-        "message": "Mise à jour automatique sécurisée",
+        "message": "Mise à jour automatique robuste",
         "content": content_encoded,
         "branch": GITHUB_BRANCH
     }
@@ -42,10 +41,10 @@ def push_to_github(file_path, repo_path):
 @app.route("/")
 def home():
     return """
-    <h2>🚀 Mon Comparateur - Mode Sécurisé</h2>
-    <p>Le serveur fonctionne correctement.</p>
+    <h2>🚀 Mon Comparateur - Service Stable</h2>
+    <p>Le serveur fonctionne parfaitement.</p>
     <p><a href='/telecharger' target='_blank' style='font-size: 18px; color: blue;'>👉 Voir / Télécharger le JSON consolidé</a></p>
-    <p><a href='/actualiser' style='font-size: 16px; color: green;'>🔄 Lancer l'actualisation</a></p>
+    <p><a href='/actualiser' style='font-size: 16px; color: green;'>🔄 Lancer l'actualisation des sources</a></p>
     """
 
 @app.route("/actualiser")
@@ -60,49 +59,50 @@ def actualiser():
             except:
                 pass
 
-        # Restreignons temporairement aux sites clés pour éviter le timeout sur Render
         tarifs_pages = {
             "ekw": "https://prix-elec.com/fournisseurs/ekwateur/offres",
             "total": "https://prix-elec.com/fournisseurs/totalenergies/offres",
+            "geg": "https://prix-elec.com/fournisseurs/geg/offres",
+            "gdb": "https://prix-elec.com/fournisseurs/gaz-de-bordeaux/offres",
+            "plen": "https://prix-elec.com/fournisseurs/plenitude/offres",
+            "llum": "https://prix-elec.com/fournisseurs/llum/offres",
+            "dyneff": "https://prix-elec.com/fournisseurs/dyneff/offres",
+            "mint": "https://prix-elec.com/fournisseurs/mint-energie/offres",
+            "primeo": "https://prix-elec.com/fournisseurs/primeo/offres",
+            "alterna": "https://prix-elec.com/fournisseurs/alterna/offres",
             "edf": "https://prix-elec.com/fournisseurs/edf/offres",
+            "octo": "https://octopusenergy.fr/offre-electricite-tarifs",
+            "alpiq": "https://prix-elec.com/fournisseurs/alpiq/offres",
+            "ohm": "https://prix-elec.com/fournisseurs/ohm-energie/offres",
+            "happe": "https://prix-elec.com/fournisseurs/happ-e/offres",
             "engie": "https://particuliers.engie.fr/",
-            "ilek": "https://www.ilek.fr/grilles-tarifaires"
+            "ilek": "https://www.ilek.fr/grilles-tarifaires",
+            "enercoop": "https://www.faq.enercoop.fr/hc/fr/articles/360024967152-Annexes-tarifaires"
         }
 
         resultats = {}
         user_agents = [
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2.1 Safari/605.1.15"
         ]
 
-        with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True)
-            context = browser.new_context(user_agent=random.choice(user_agents))
-            page = context.new_page()
-
-            for fournisseur, url in tarifs_pages.items():
-                statut_final = "erreur"
-                code_final = 0
-                try:
-                    res = requests.get(url, headers={"User-Agent": random.choice(user_agents)}, timeout=4)
-                    code_final = res.status_code
-                    if res.status_code == 200:
-                        statut_final = "code_200_requests"
-                    else:
-                        response_pw = page.goto(url, timeout=8000, wait_until="domcontentloaded")
-                        code_val = response_pw.status if response_pw else code_final
-                        statut_final = f"code_{code_val}_playwright"
-                        code_final = code_val
-                except Exception as ex:
-                    statut_final = f"erreur: {str(ex)}"
-
-                resultats[fournisseur] = {"statut": statut_final, "code": code_final}
-
-            browser.close()
+        for fournisseur, url in tarifs_pages.items():
+            try:
+                headers = {
+                    "User-Agent": random.choice(user_agents),
+                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                    "Accept-Language": "fr-FR,fr;q=0.9,en;q=0.8"
+                }
+                res = requests.get(url, headers=headers, timeout=5)
+                resultats[fournisseur] = {"statut": f"code_{res.status_code}", "code": res.status_code}
+            except Exception as e:
+                resultats[fournisseur] = {"statut": "erreur_timeout", "code": 0}
+            time.sleep(1)
 
         grille_globale = {
             "metadonnees": {
                 "derniere_mise_a_jour": "2026-11-01",
-                "statut": "Consolidation optimisée sans timeout"
+                "statut": "Consolidation hybride stable"
             },
             "tests_accessibilite_sources": resultats,
             "donnees_manuelles_et_confirmees": donnees_manuelles
@@ -116,11 +116,11 @@ def actualiser():
         push_to_github(fichier_sortie, "donnees/grille_consolidee.json")
 
         return """
-        <h3>Mise à jour effectuée avec succès sans dépassement de délai !</h3>
+        <h3>Mise à jour effectuée avec succès !</h3>
         <p><a href='/'>Retour à l'accueil</a> | <a href='/telecharger' target='_blank'>Voir le JSON</a></p>
         """
     except Exception as e:
-        return f"<h3>⚠️ Erreur interne attrapée :</h3><pre>{str(e)}</pre><p><a href='/'>Retour</a></p>", 500
+        return f"<h3>⚠️ Erreur :</h3><pre>{str(e)}</pre><p><a href='/'>Retour</a></p>", 500
 
 @app.route("/telecharger")
 def telecharger():
