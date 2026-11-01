@@ -165,6 +165,32 @@
   "abo_g0": {},
   "hphc": [
     {
+  "k": "edf",
+  "name": "EDF",
+  "offer": "Tarif Bleu (Heures Pleines / Heures Creuses)",
+  "hp": 0.2142,
+  "hc": 0.1589,
+  "abo": {
+    "6": 187.80,
+    "9": 234.72,
+    "12": 279.84,
+    "15": 322.08,
+    "18": 365.88,
+    "24": 458.88,
+    "30": 544.44,
+    "36": 630.48
+  },
+  "abo_seul": true,
+  "niv": "officiel",
+  "nivd": "01/02/2026",
+  "d": "01 nov. 2026",
+  "typ": "reglemente",
+  "s": [
+    "Grille officielle Tarif Bleu EDF, option HP/HC",
+    "https://particuliers.edf.fr"
+  ]
+},
+    {
       "k": "dyneff",
       "name": "Dyneff",
       "offer": "Contrat+ Électricité",
