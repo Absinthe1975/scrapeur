@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 # Configuration GitHub (récupérée de manière sécurisée depuis les variables d'environnement Render)
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
-GITHUB_REPO = os.environ.get("GITHUB_REPO", "Absinthe1975/scrapeur")  # Ex: "TonPseudo/ton-repo"
+GITHUB_REPO = os.environ.get("GITHUB_REPO", "Absinthe1975/scrapeur")
 GITHUB_BRANCH = "main"
 
 def push_to_github(file_path, repo_path):
@@ -27,7 +27,7 @@ def push_to_github(file_path, repo_path):
         content_bytes = f.read()
     content_encoded = base64.b64encode(content_bytes).decode("utf-8")
 
-    # 1. Vérifier si le fichier existe déjà pour récupérer son SHA (obligatoire pour l'API GitHub)
+    # 1. Vérifier si le fichier existe déjà pour récupérer son SHA
     r = requests.get(url, headers=headers)
     sha = None
     if r.status_code == 200:
@@ -35,7 +35,7 @@ def push_to_github(file_path, repo_path):
 
     # 2. Préparer la requête de mise à jour / création
     data = {
-        "message": "Mise à jour automatique de la grille consolidée via Render",
+        "message": "Mise à jour automatique de la grille consolidée et des sources via Render",
         "content": content_encoded,
         "branch": GITHUB_BRANCH
     }
@@ -52,33 +52,56 @@ def push_to_github(file_path, repo_path):
         return False
 
 def run_consolidation():
-    print("=== Démarrage de la consolidation globale ===")
+    print("=== Démarrage de la consolidation globale avec sources == data ===")
 
-    # Chemin exact vers ton fichier manuel dans le dossier donnees
+    # 1. Chargement des tarifs manuels
     chemin_manuel = os.path.join("donnees", "tarifs_manuels.json")
     donnees_manuelles = {}
-    
     if os.path.exists(chemin_manuel):
         try:
             with open(chemin_manuel, "r", encoding="utf-8") as f:
                 donnees_manuelles = json.load(f)
-            print("Succès : Fichier 'tarifs_manuels.json' chargé depuis le dossier donnees.")
+            print("Succès : Fichier 'tarifs_manuels.json' chargé.")
         except json.JSONDecodeError:
-            print("Attention : Le fichier 'tarifs_manuels.json' est vide ou mal formaté. Utilisation d'une structure vide.")
-            donnees_manuelles = {}
-    else:
-        print(f"Attention : Fichier introuvable à l'emplacement {chemin_manuel}")
+            print("Attention : 'tarifs_manuels.json' mal formaté.")
 
-    # Structure de la grille globale unifiée
+    # 2. Chargement ou intégration des sources et liens (sources.json)
+    sources_data = {
+        "provider": "gemini",
+        "model": "gemini-3.1-flash-lite",
+        "tarifs_pages": {
+            "ekw": "https://prix-elec.com/fournisseurs/ekwateur/offres",
+            "total": "https://prix-elec.com/fournisseurs/totalenergies/offres",
+            "geg": "https://prix-elec.com/fournisseurs/geg/offres",
+            "gdb": "https://prix-elec.com/fournisseurs/gaz-de-bordeaux/offres",
+            "plen": "https://prix-elec.com/fournisseurs/plenitude/offres",
+            "llum": "https://prix-elec.com/fournisseurs/llum/offres",
+            "dyneff": "https://prix-elec.com/fournisseurs/dyneff/offres",
+            "mint": "https://prix-elec.com/fournisseurs/mint-energie/offres",
+            "primeo": "https://prix-elec.com/fournisseurs/primeo/offres",
+            "alterna": "https://prix-elec.com/fournisseurs/alterna/offres",
+            "edf": "https://prix-elec.com/fournisseurs/edf/offres",
+            "octo": "https://prix-elec.com/fournisseurs/octopus-energy/offres",
+            "alpiq": "https://prix-elec.com/fournisseurs/alpiq/offres",
+            "ohm": "https://prix-elec.com/fournisseurs/ohm-energie/offres",
+            "happe": "https://prix-elec.com/fournisseurs/happ-e/offres",
+            "engie": "https://prix-elec.com/fournisseurs/engie/offres",
+            "ilek": "https://prix-elec.com/fournisseurs/ilek/offres",
+            "enercoop": "https://prix-elec.com/fournisseurs/enercoop/offres"
+        }
+    }
+
+    # Structure globale unifiée intégrant les tarifs et le référentiel des sources
     grille_globale = {
         "metadonnees": {
             "derniere_mise_a_jour": "2026-11-01",
-            "statut": "Consolidation hybride (Données manuelles et officielles)"
+            "statut": "Consolidation hybride (Tarifs et Sources intégrés)"
         },
+        "referentiel_sources": sources_data,
         "donnees_manuelles_et_confirmees": donnees_manuelles
     }
 
-    # Sauvegarde locale du fichier consolidé dans le dossier donnees
+    # Sauvegarde locale
     os.makedirs("donnees", exist_ok=True)
     fichier_sortie = os.path.join("donnees", "grille_consolidee.json")
     with open(fichier_sortie, "w", encoding="utf-8") as f:
@@ -91,27 +114,25 @@ def run_consolidation():
 
 @app.route("/")
 def home():
-    """Déclenche la consolidation lorsque tu visites l'URL de ton service Render"""
     try:
         run_consolidation()
         return """
-        <h2>Consolidation exécutée avec succès !</h2>
-        <p>Le fichier <b>grille_consolidee.json</b> a été mis à jour et synchronisé.</p>
-        <p><a href='/telecharger' target='_blank' style='font-size: 18px; color: blue;'>👉 Cliquer ici pour voir / télécharger le fichier JSON unifié</a></p>
+        <h2>Consolidation globale et des sources exécutée avec succès !</h2>
+        <p>Le fichier <b>grille_consolidee.json</b> intègre désormais toutes les données et les liens de référence.</p>
+        <p><a href='/telecharger' target='_blank' style='font-size: 18px; color: blue;'>👉 Voir / Télécharger le JSON unifié complet</a></p>
         """
     except Exception as e:
         return f"Erreur durant l'exécution : {e}", 500
 
 @app.route("/telecharger")
 def telecharger():
-    """Permet de voir ou télécharger directement le fichier JSON unifié depuis le navigateur"""
     fichier_sortie = os.path.join("donnees", "grille_consolidee.json")
     if os.path.exists(fichier_sortie):
         with open(fichier_sortie, "r", encoding="utf-8") as f:
             data = json.load(f)
         return jsonify(data)
     else:
-        return "Le fichier consolidé n'a pas encore été généré. Visitez la page d'accueil d'abord.", 404
+        return "Le fichier consolidé n'a pas encore été généré.", 404
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
