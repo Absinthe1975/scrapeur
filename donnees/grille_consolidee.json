@@ -1,30 +1,80 @@
 {
   "metadonnees": {
     "derniere_mise_a_jour": "2026-11-01",
-    "statut": "Consolidation hybride (Tarifs et Sources intégrés)"
+    "statut": "Consolidation hybride avec mode ralenti (anti-surcharge)"
   },
-  "referentiel_sources": {
-    "provider": "gemini",
-    "model": "gemini-3.1-flash-lite",
-    "tarifs_pages": {
-      "ekw": "https://prix-elec.com/fournisseurs/ekwateur/offres",
-      "total": "https://prix-elec.com/fournisseurs/totalenergies/offres",
-      "geg": "https://prix-elec.com/fournisseurs/geg/offres",
-      "gdb": "https://prix-elec.com/fournisseurs/gaz-de-bordeaux/offres",
-      "plen": "https://prix-elec.com/fournisseurs/plenitude/offres",
-      "llum": "https://prix-elec.com/fournisseurs/llum/offres",
-      "dyneff": "https://prix-elec.com/fournisseurs/dyneff/offres",
-      "mint": "https://prix-elec.com/fournisseurs/mint-energie/offres",
-      "primeo": "https://prix-elec.com/fournisseurs/primeo/offres",
-      "alterna": "https://prix-elec.com/fournisseurs/alterna/offres",
-      "edf": "https://prix-elec.com/fournisseurs/edf/offres",
-      "octo": "https://prix-elec.com/fournisseurs/octopus-energy/offres",
-      "alpiq": "https://prix-elec.com/fournisseurs/alpiq/offres",
-      "ohm": "https://prix-elec.com/fournisseurs/ohm-energie/offres",
-      "happe": "https://prix-elec.com/fournisseurs/happ-e/offres",
-      "engie": "https://prix-elec.com/fournisseurs/engie/offres",
-      "ilek": "https://prix-elec.com/fournisseurs/ilek/offres",
-      "enercoop": "https://prix-elec.com/fournisseurs/enercoop/offres"
+  "tests_accessibilite_sources": {
+    "ekw": {
+      "statut": "code_erreur_403",
+      "code": 403
+    },
+    "total": {
+      "statut": "code_erreur_403",
+      "code": 403
+    },
+    "geg": {
+      "statut": "code_erreur_403",
+      "code": 403
+    },
+    "gdb": {
+      "statut": "code_erreur_403",
+      "code": 403
+    },
+    "plen": {
+      "statut": "code_erreur_403",
+      "code": 403
+    },
+    "llum": {
+      "statut": "code_erreur_403",
+      "code": 403
+    },
+    "dyneff": {
+      "statut": "code_erreur_403",
+      "code": 403
+    },
+    "mint": {
+      "statut": "code_erreur_403",
+      "code": 403
+    },
+    "primeo": {
+      "statut": "code_erreur_403",
+      "code": 403
+    },
+    "alterna": {
+      "statut": "code_erreur_403",
+      "code": 403
+    },
+    "edf": {
+      "statut": "code_erreur_403",
+      "code": 403
+    },
+    "octo": {
+      "statut": "code_erreur_429",
+      "code": 429
+    },
+    "alpiq": {
+      "statut": "code_erreur_403",
+      "code": 403
+    },
+    "ohm": {
+      "statut": "code_erreur_403",
+      "code": 403
+    },
+    "happe": {
+      "statut": "code_erreur_403",
+      "code": 403
+    },
+    "engie": {
+      "statut": "accessible",
+      "code": 200
+    },
+    "ilek": {
+      "statut": "accessible",
+      "code": 200
+    },
+    "enercoop": {
+      "statut": "code_erreur_403",
+      "code": 403
     }
   },
   "donnees_manuelles_et_confirmees": {
