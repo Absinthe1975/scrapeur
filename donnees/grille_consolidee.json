@@ -98,6 +98,88 @@
     },
     "elec": [
       {
+        "k": "edf",
+        "name": "EDF",
+        "offer": "Zen Estival",
+        "description": "Heures creuses et super creuses l'été, plus chères l'hiver ; bonus de bienvenue de 100 €.",
+        "tarifs_saisonniers": {
+          "ete": {
+            "heures_pleines": 0.1522,
+            "heures_creuses": 0.1304,
+            "super_creuses": 0.0987
+          },
+          "hiver": {
+            "heures_pleines": 0.2627,
+            "heures_creuses": 0.2062,
+            "super_creuses": 0.1928
+          }
+        },
+        "prime": "100 €",
+        "niv": "estime_presse",
+        "nivd": "06/2026",
+        "d": "01 nov. 2026",
+        "typ": "saisonnier",
+        "s": [
+          "Hellowatt - Offres électricité (juin 2026)",
+          "https://www.hellowatt.fr/blog/octotempo-zen-offres-electricite/"
+        ]
+      },
+      {
+        "k": "edf",
+        "name": "EDF",
+        "offer": "Tarif Bleu - Option Tempo",
+        "bleu_hc": 0.1296,
+        "bleu_hp": 0.1609,
+        "blanc_hc": 0.1486,
+        "blanc_hp": 0.1894,
+        "rouge_hc": 0.1568,
+        "rouge_hp": 0.7562,
+        "abo": {
+          "9": 234.72,
+          "12": 279.84,
+          "15": 322.08,
+          "18": 365.88,
+          "30": 544.44,
+          "36": 630.48
+        },
+        "niv": "officiel",
+        "nivd": "01/02/2026",
+        "d": "01 nov. 2026",
+        "typ": "reglemente",
+        "s": [
+          "Grille officielle Tarif Bleu EDF, option Tempo",
+          "https://particuliers.edf.fr"
+        ]
+      },
+      {
+        "k": "edf",
+        "name": "EDF",
+        "offer": "Tarif Bleu (Option Base)",
+        "a": 0.2001,
+        "b": 0.2001,
+        "ab6": 187.8,
+        "ab9": 234.72,
+        "abo": {
+          "3": 144.36,
+          "6": 187.8,
+          "9": 234.72,
+          "12": 279.84,
+          "15": 322.08,
+          "18": 365.88,
+          "24": 458.88,
+          "30": 544.44,
+          "36": 630.48
+        },
+        "niv": "officiel",
+        "nivd": "01/02/2026",
+        "d": "01 nov. 2026",
+        "typ": "reglemente",
+        "s": [
+          "Grille officielle Tarif Bleu EDF, option Base",
+          "https://particuliers.edf.fr"
+        ]
+      },
+      {
         "k": "bellenergie",
         "name": "La Bellenergie",
         "offer": "Prudence, prix fixe 1 an",
@@ -215,6 +297,32 @@
     "abo_g": {},
     "abo_g0": {},
     "hphc": [
+      {
+        "k": "edf",
+        "name": "EDF",
+        "offer": "Tarif Bleu (Heures Pleines / Heures Creuses)",
+        "hp": 0.2142,
+        "hc": 0.1589,
+        "abo": {
+          "6": 187.8,
+          "9": 234.72,
+          "12": 279.84,
+          "15": 322.08,
+          "18": 365.88,
+          "24": 458.88,
+          "30": 544.44,
+          "36": 630.48
+        },
+        "abo_seul": true,
+        "niv": "officiel",
+        "nivd": "01/02/2026",
+        "d": "01 nov. 2026",
+        "typ": "reglemente",
+        "s": [
+          "Grille officielle Tarif Bleu EDF, option HP/HC",
+          "https://particuliers.edf.fr"
+        ]
+      },
       {
         "k": "dyneff",
         "name": "Dyneff",
