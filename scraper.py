@@ -22,11 +22,11 @@ def run_consolidation():
     else:
         print(f"Attention : Fichier introuvable à l'emplacement {chemin_manuel}")
 
-    # Structure de la grille globale unifiée
+    # Structure de la grille globale unifiée intégrant tes données manuelles
     grille_globale = {
         "metadonnees": {
             "derniere_mise_a_jour": "2026-11-01",
-            "statut": "Consolidation hybride (Données sécurisées)"
+            "statut": "Consolidation hybride (Données manuelles et officielles)"
         },
         "donnees_manuelles_et_confirmees": donnees_manuelles
     }
