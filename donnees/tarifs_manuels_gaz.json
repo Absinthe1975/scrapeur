@@ -1,0 +1,43 @@
+{
+  "_lisez_moi": "Grilles de gaz saisies à la main pour les fournisseurs bloqués. Ce fichier servira de base de test avant fusion.",
+  "gas": [
+    {
+      "k": "engie",
+      "name": "Engie",
+      "offer": "Prix Gaz Zen 1 an",
+      "b1": 0.1345,
+      "b2": 0.1120,
+      "abo_b1": 310.50,
+      "abo_b2": 310.50,
+      "niv": "officiel",
+      "nivd": "01/10/2026",
+      "d": "01 nov. 2026",
+      "typ": "fixe",
+      "s": [
+        "Grille officielle Engie Gaz Zen (octobre 2026)",
+        "https://www.engie.fr"
+      ]
+    },
+    {
+      "k": "totalenergies",
+      "name": "TotalEnergies",
+      "offer": "Standard Gaz",
+      "b1": 0.1362,
+      "b2": 0.1135,
+      "abo_b1": 320.00,
+      "abo_b2": 320.00,
+      "niv": "officiel",
+      "nivd": "01/10/2026",
+      "d": "01 nov. 2026",
+      "typ": "variable",
+      "s": [
+        "Grille officielle TotalEnergies Gaz",
+        "https://www.totalenergies.fr"
+      ]
+    }
+  ],
+  "abo_g": {
+    "engie": 310.50,
+    "totalenergies": 320.00
+  }
+}
