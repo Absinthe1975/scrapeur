@@ -2,6 +2,7 @@ import os
 import json
 import base64
 import time
+import random
 import requests
 from flask import Flask, jsonify
 
@@ -27,7 +28,7 @@ def push_to_github(file_path, repo_path):
     sha = r.json().get("sha") if r.status_code == 200 else None
 
     data = {
-        "message": "Mise à jour automatique de la grille consolidée",
+        "message": "Mise à jour automatique de la grille consolidée (anti-blocage)",
         "content": content_encoded,
         "branch": GITHUB_BRANCH
     }
@@ -39,17 +40,15 @@ def push_to_github(file_path, repo_path):
 
 @app.route("/")
 def home():
-    # Affichage immédiat pour éviter le timeout 502 de Render
     return """
     <h2>🚀 Mon Comparateur - Service Actif</h2>
-    <p>Le serveur fonctionne correctement et évite les erreurs de délai.</p>
+    <p>Le serveur fonctionne correctement.</p>
     <p><a href='/telecharger' target='_blank' style='font-size: 18px; color: blue;'>👉 Voir / Télécharger le JSON consolidé</a></p>
-    <p><a href='/actualiser' style='font-size: 16px; color: green;'>🔄 Lancer une mise à jour manuelle des sources</a></p>
+    <p><a href='/actualiser' style='font-size: 16px; color: green;'>🔄 Lancer une mise à jour optimisée (contournement)</a></p>
     """
 
 @app.route("/actualiser")
 def actualiser():
-    # Route dédiée pour lancer le scraping ralenti sans bloquer la page d'accueil
     chemin_manuel = os.path.join("donnees", "tarifs_manuels.json")
     donnees_manuelles = {}
     if os.path.exists(chemin_manuel):
@@ -81,20 +80,36 @@ def actualiser():
     }
 
     resultats = {}
-    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+    
+    # Liste de User-Agents réalistes pour simuler différents navigateurs et éviter le blocage net
+    user_agents = [
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2.1 Safari/605.1.15",
+        "Mozilla/5.0 (X11; Linux x86_64; rv:123.0) Gecko/20100101 Firefox/123.0"
+    ]
 
     for fournisseur, url in tarifs_pages.items():
         try:
-            reponse = requests.get(url, headers=headers, timeout=5)
+            # En-têtes complets imitant un navigateur moderne
+            headers = {
+                "User-Agent": random.choice(user_agents),
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+                "Accept-Language": "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7",
+                "Referer": "https://www.google.com/",
+                "Connection": "keep-alive"
+            }
+            reponse = requests.get(url, headers=headers, timeout=8)
             resultats[fournisseur] = {"statut": f"code_{reponse.status_code}", "code": reponse.status_code}
         except:
             resultats[fournisseur] = {"statut": "erreur_ou_timeout"}
-        time.sleep(1) # Pause réduite à 1 seconde pour être plus fluide
+        
+        # Pause aléatoire entre 2 et 4 secondes pour paraître plus naturel
+        time.sleep(random.uniform(2.0, 4.0))
 
     grille_globale = {
         "metadonnees": {
             "derniere_mise_a_jour": "2026-11-01",
-            "statut": "Consolidation hybride optimisée"
+            "statut": "Consolidation hybride avec en-têtes furtifs"
         },
         "tests_accessibilite_sources": resultats,
         "donnees_manuelles_et_confirmees": donnees_manuelles
@@ -108,7 +123,7 @@ def actualiser():
     push_to_github(fichier_sortie, "donnees/grille_consolidee.json")
 
     return """
-    <h3>Mise à jour effectuée avec succès !</h3>
+    <h3>Mise à jour furtive effectuée avec succès !</h3>
     <p><a href='/'>Retour à l'accueil</a> | <a href='/telecharger' target='_blank'>Voir le JSON</a></p>
     """
 
