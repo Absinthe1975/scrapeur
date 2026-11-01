@@ -5,6 +5,7 @@ import time
 import random
 import requests
 from flask import Flask, jsonify
+from playwright.sync_api import sync_playwright
 
 app = Flask(__name__)
 
@@ -28,7 +29,7 @@ def push_to_github(file_path, repo_path):
     sha = r.json().get("sha") if r.status_code == 200 else None
 
     data = {
-        "message": "Mise à jour automatique de la grille consolidée (anti-blocage)",
+        "message": "Mise à jour automatique avec Playwright anti-403",
         "content": content_encoded,
         "branch": GITHUB_BRANCH
     }
@@ -41,10 +42,10 @@ def push_to_github(file_path, repo_path):
 @app.route("/")
 def home():
     return """
-    <h2>🚀 Mon Comparateur - Service Actif</h2>
-    <p>Le serveur fonctionne correctement.</p>
+    <h2>🚀 Mon Comparateur - Mode Playwright Actif</h2>
+    <p>Le serveur fonctionne avec bascule automatique sur navigateur virtuel en cas d'erreur 403.</p>
     <p><a href='/telecharger' target='_blank' style='font-size: 18px; color: blue;'>👉 Voir / Télécharger le JSON consolidé</a></p>
-    <p><a href='/actualiser' style='font-size: 16px; color: green;'>🔄 Lancer une mise à jour optimisée (contournement)</a></p>
+    <p><a href='/actualiser' style='font-size: 16px; color: green;'>🔄 Lancer une mise à jour complète (Requests + Playwright)</a></p>
     """
 
 @app.route("/actualiser")
@@ -80,36 +81,62 @@ def actualiser():
     }
 
     resultats = {}
-    
-    # Liste de User-Agents réalistes pour simuler différents navigateurs et éviter le blocage net
     user_agents = [
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2.1 Safari/605.1.15",
-        "Mozilla/5.0 (X11; Linux x86_64; rv:123.0) Gecko/20100101 Firefox/123.0"
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2.1 Safari/605.1.15"
     ]
 
-    for fournisseur, url in tarifs_pages.items():
-        try:
-            # En-têtes complets imitant un navigateur moderne
-            headers = {
-                "User-Agent": random.choice(user_agents),
-                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-                "Accept-Language": "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7",
-                "Referer": "https://www.google.com/",
-                "Connection": "keep-alive"
-            }
-            reponse = requests.get(url, headers=headers, timeout=8)
-            resultats[fournisseur] = {"statut": f"code_{reponse.status_code}", "code": reponse.status_code}
-        except:
-            resultats[fournisseur] = {"statut": "erreur_ou_timeout"}
-        
-        # Pause aléatoire entre 2 et 4 secondes pour paraître plus naturel
-        time.sleep(random.uniform(2.0, 4.0))
+    # Lancement de Playwright en arrière-plan
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        context = browser.new_context(user_agent=random.choice(user_agents))
+        page = context.new_page()
+
+        for fournisseur, url in tarifs_pages.items():
+            statut_final = "erreur"
+            code_final = 0
+            try:
+                # 1. Test rapide avec requests
+                headers = {"User-Agent": random.choice(user_agents)}
+                res = requests.get(url, headers=headers, timeout=5)
+                code_final = res.status_code
+                
+                if res.status_code == 200:
+                    statut_final = "code_200_requests"
+                elif res.status_code in [403, 429]:
+                    # 2. Si bloqué (403/429), bascule sur Playwright
+                    print(f"🔄 Bascule sur Playwright pour {fournisseur} (Code {res.status_code})")
+                    response_pw = page.goto(url, timeout=10000, wait_until="domcontentloaded")
+                    if response_pw and response_pw.status == 200:
+                        statut_final = "code_200_playwright"
+                        code_final = 200
+                    else:
+                        code_val = response_pw.status if response_pw else code_final
+                        statut_final = f"code_{code_val}_playwright"
+                        code_final = code_val
+                else:
+                    statut_final = f"code_{res.status_code}"
+            except Exception as e:
+                # En cas d'échec réseau requests, tentative directe via Playwright
+                try:
+                    response_pw = page.goto(url, timeout=10000, wait_until="domcontentloaded")
+                    if response_pw and response_pw.status == 200:
+                        statut_final = "code_200_playwright"
+                        code_final = 200
+                    else:
+                        statut_final = "erreur_playwright"
+                except:
+                    statut_final = "erreur_totale"
+
+            resultats[fournisseur] = {"statut": statut_final, "code": code_final}
+            time.sleep(1)
+
+        browser.close()
 
     grille_globale = {
         "metadonnees": {
             "derniere_mise_a_jour": "2026-11-01",
-            "statut": "Consolidation hybride avec en-têtes furtifs"
+            "statut": "Consolidation hybride avec Playwright"
         },
         "tests_accessibilite_sources": resultats,
         "donnees_manuelles_et_confirmees": donnees_manuelles
@@ -123,7 +150,7 @@ def actualiser():
     push_to_github(fichier_sortie, "donnees/grille_consolidee.json")
 
     return """
-    <h3>Mise à jour furtive effectuée avec succès !</h3>
+    <h3>Mise à jour avec Playwright effectuée avec succès !</h3>
     <p><a href='/'>Retour à l'accueil</a> | <a href='/telecharger' target='_blank'>Voir le JSON</a></p>
     """
 
