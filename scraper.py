@@ -28,7 +28,7 @@ def push_to_github(file_path, repo_path):
     sha = r.json().get("sha") if r.status_code == 200 else None
 
     data = {
-        "message": "Mise à jour automatique robuste",
+        "message": "Mise à jour automatique robuste (Élec + Gaz)",
         "content": content_encoded,
         "branch": GITHUB_BRANCH
     }
@@ -50,12 +50,28 @@ def home():
 @app.route("/actualiser")
 def actualiser():
     try:
+        # 1. Chargement des tarifs manuels électricité
         chemin_manuel = os.path.join("donnees", "tarifs_manuels.json")
         donnees_manuelles = {}
         if os.path.exists(chemin_manuel):
             try:
                 with open(chemin_manuel, "r", encoding="utf-8") as f:
                     donnees_manuelles = json.load(f)
+            except:
+                pass
+
+        # 2. Chargement et fusion des tarifs manuels gaz
+        chemin_manuel_gaz = os.path.join("donnees", "tarifs_manuels_gaz.json")
+        if os.path.exists(chemin_manuel_gaz):
+            try:
+                with open(chemin_manuel_gaz, "r", encoding="utf-8") as f:
+                    donnees_gaz = json.load(f)
+                    # Injection de la liste des offres de gaz
+                    if "gas" in donnees_gaz:
+                        donnees_manuelles["gas"] = donnees_gaz["gas"]
+                    # Fusion des abonnements gaz si présents
+                    if "abo_g" in donnees_gaz:
+                        donnees_manuelles.setdefault("abo_g", {}).update(donnees_gaz["abo_g"])
             except:
                 pass
 
