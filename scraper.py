@@ -53,16 +53,16 @@ def run_consolidation():
     # 1. Récupération des données automatisées possibles
     donnees_auto = scraper_donnees_ouvertes()
 
-    # 2. Chargement de ton fichier de saisie manuelle (EDF, Engie, ilek, etc.)
-    chemin_manuel = "tarifs_manuels.json"
+    # 2. Chargement de ton fichier de saisie manuelle depuis le dossier "donnees"
+    chemin_manuel = os.path.join("donnees", "tarifs_manuels.json")
     donnees_manuelles = {}
     
     if os.path.exists(chemin_manuel):
         with open(chemin_manuel, "r", encoding="utf-8") as f:
             donnees_manuelles = json.load(f)
-        print("Succès : Fichier 'tarifs_manuels.json' chargé (filet de sécurité manuel).")
+        print("Succès : Fichier 'tarifs_manuels.json' chargé depuis le dossier donnees.")
     else:
-        print("Attention : 'tarifs_manuels.json' introuvable.")
+        print(f"Attention : Le fichier est introuvable au chemin : {chemin_manuel}")
 
     # 3. Fusion intelligente : Le manuel complète ou remplace l'automatique si bloqué
     grille_globale = {
